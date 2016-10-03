@@ -1,6 +1,6 @@
 ## Linux Monitoring Tool
 
-![Screenshot](https://raw.githubusercontent.com/mc8081/anleitungen/master/linux_dash/screen.png)
+<img src="https://raw.githubusercontent.com/mc8051/anleitungen/master/linux_dash/screen.png" alt="Linux Dash Screen" style="width: 80%;"/>
 
 linux-dash ist ein Open Source Monitoring Tool. Es ist ziemlich einfach aufzusetzten.
 

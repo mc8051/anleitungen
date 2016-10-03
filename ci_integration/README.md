@@ -6,7 +6,7 @@ Der sogennante Runner führt seine Jobs nach jedem push aus. Je nach Einstellung
 ### GitHub
 Da GitHub keine Runner zu Verfügung stellt muss man auf externe Anbieter zurückgreifen, dafür wird dort Account mit dem GitHub Account verknüpft.   
  Hier sind die beliebtesten Runnter:
-##### [Circle CI](https://circleci.com/) (*circle.yml*)
+#### [Circle CI](https://circleci.com/) (*circle.yml*)
 **Java:**
 
     machine:
@@ -17,7 +17,7 @@ Da GitHub keine Runner zu Verfügung stellt muss man auf externe Anbieter zurüc
         - mvn package
         - cp target/IRCBouncer.jar $CIRCLE_ARTIFACTS/
 
-##### [Travis CI](https://travis-ci.org/) (*.travis.yml*)
+#### [Travis CI](https://travis-ci.org/) (*.travis.yml*)
 **Java:**
 
     language: java
@@ -76,7 +76,7 @@ Da GitHub keine Runner zu Verfügung stellt muss man auf externe Anbieter zurüc
     git push origin master -f --tags
 
 ### GitLab
-##### [GitLab CI](https://gitlab.com/ci/lint) (*.gitlab-ci.yml*)
+#### [GitLab CI](https://gitlab.com/ci/lint) (*.gitlab-ci.yml*)
 **Java:**
 
     image: maven:latest

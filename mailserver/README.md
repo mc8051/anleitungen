@@ -26,7 +26,7 @@ Bevor andere Pakete installiert werden einmal ein Update ausführen.
 ---
 
 ### Mail Server Installation
-##### Voreinstellung:
+#### Voreinstellung:
 Mail Account einrichten mit der User ID 6000
 
     useradd -u 6000 vmail -d /var/vmail/
@@ -40,18 +40,18 @@ Datenbank Benutzer erstellen mit eigener Datenbank
 Vorgefertigte Datein herrunterladen (aus dem Ordner config).  
 In den Datein muss dass Passwort (Platzhalter: "EUER_PASSWORT") mit dem MYSQL User Passwort ersetzt werden.
 
-##### Paketinstallation:
+#### Paketinstallation:
     apt-get install dovecot-common dovecot-imap dovecot-pop3d postfix postfix-mysql
 
 Bei der Installation möchte Postfix eine Konfiguration haben, diese sieht wie folgt aus.
 - Allgemeine Art: *Internet-Site*
 - System-E-Mail-Name: *Domain Name*
 
-##### Konfiguration von Postfix:
+#### Konfiguration von Postfix:
 Hochladen der geänderten Vorgefertigte Datein von postfix.   
 Anpassen der Rechte
 
-    chown 600 /etc/postfix/mysql-* && chmodx g+r /etc/postfix/mysql-*
+    chown 600 /etc/postfix/mysql-* && chmod g+r /etc/postfix/mysql-*
 
 Bearbeiten der */etc/postfix/main.cf*
 
@@ -262,7 +262,7 @@ Und komplett ersetzten. Bitte komplett durchlesen!
 
     postfix check
 
-##### Konfiguration von Dovecot:
+#### Konfiguration von Dovecot:
 Hochladen der geänderten Vorgefertigte Datein von dovecot.  
 Anpassen der Rechte
 
@@ -318,7 +318,7 @@ Und komplett ersetzten. Bitte komplett durchlesen und dabei **mydomain** ersetzt
         postmaster_address = info@mydomain
     }
 
-##### Final
+#### Final
     service spamassassin restart
     service amavis restart
     service postfix restart
@@ -327,14 +327,14 @@ Und komplett ersetzten. Bitte komplett durchlesen und dabei **mydomain** ersetzt
 ---
 
 ### PostfixAdmin Installation
-##### Paketinstallation:
+#### Paketinstallation:
     apt-get install php5-imap 
 
 Letze Version von [Postfix](https://sourceforge.net/projects/postfixadmin/files/postfixadmin/) herrunterladen und auf den Server hochladen in */var/www/html/*.
 
     tar xzvf postfix.tar.gz
 
-##### Konfiguration von PostfixAdmin:
+#### Konfiguration von PostfixAdmin:
 Rechte gewähren für den Webserver
 
     chown www-data:www-data -R /var/www/html/postfix/
@@ -359,7 +359,6 @@ Bearbeiten folgender Einträge, falls nicht vorhanden hinzufügen.
 
 Aufrufen des Setups im Browser (bspw. *www.example.tld/postfix/setup.php*)  
 Hier sollte bei dem Check alles bestanden sein, falls nicht einfach Nachinstallieren.  
-![Postfix Admin Setup Check](https://raw.githubusercontent/mc8051/anleitungen/tree/master/mailserver/screenshots/postfix-admin-check.png)
 
 Setup-Passwort generieren lassen und den Hashwert in die *config.inc.php* einfügen bei *$CONF['setup_password']*.
 
@@ -375,7 +374,7 @@ Zudem sollte man bereits jetzt schon unter Virtual Liste ein EMail Account erste
 
 ### Spam Filter Installation
 
-##### Paketinstallation:
+#### Paketinstallation:
     apt-get install spamassassin razor pyzor rsyslog
     apt-get install amavisd-new
     apt-get install dovecot-sieve dovecot-lmtpd
@@ -390,7 +389,7 @@ Zudem sollte man bereits jetzt schon unter Virtual Liste ein EMail Account erste
     razor-admin -register
     pyzor discover
 
-##### spamassassin
+#### spamassassin
 /etc/default/spamassassin  
 ENABLED=1 und CRON=1 setzen:
 
@@ -403,7 +402,7 @@ ENABLED=1 und CRON=1 setzen:
     # spamassassin's rules on a nightly basis
     CRON=1
 
-##### amavis
+#### amavis
 /etc/amavis/conf.d/50-user
 
     use strict;
@@ -437,7 +436,7 @@ ENABLED=1 und CRON=1 setzen:
     #------------ Do not modify anything below this line -------------
     1;  # ensure a defined return
 
-##### sieve
+#### sieve
     mkdir /var/vmail/sieve/
     chown -R mail:mail /var/vmail/sieve/
 
@@ -450,7 +449,7 @@ Default Sieve Script /var/lib/dovecot/sieve/default.sieve
       fileinto "Junk";
     }
 
-##### dovecot
+#### dovecot
 /etc/dovecot/local.conf
 
     # Vorraussetzung fuer Spamhandling
@@ -474,7 +473,7 @@ Default Sieve Script /var/lib/dovecot/sieve/default.sieve
         info_log_path = /var/log/dovecot-sieve.log
     }
 
-##### postfix
+#### postfix
 /etc/postfix/main.cf
 
     # Spamfilter
@@ -526,14 +525,14 @@ In */etc/postfix/main.cf* muss *local_transport = virtual* entfernt werden.
         -o content_filter=
         -o receive_override_options=no_header_body_checks
 
-##### clamav
+#### clamav
 /etc/clamav/clamd.conf
 
     # Anpassung von Martin Enders
     AllowSupplementaryGroups true
     usermod -a -G amavis clamav
 
-##### Final
+#### Final
     service spamassassin restart
     service amavis restart
     service postfix restart
@@ -544,18 +543,18 @@ In */etc/postfix/main.cf* muss *local_transport = virtual* entfernt werden.
 ---
 
 ### DNS Einstellung
-##### Hostnamen anpassen
+#### Hostnamen anpassen
 Der Hostname muss in eure Domain geändert werden
 
     nano /etc/hostname
-##### MX-Record
+#### MX-Record
 Folgende DNS Einstellungen müssen getätigt werden
-![Screenshot Thunderbird](https://raw.githubusercontent/mc8051/anleitungen/tree/master/mailserver/screenshots/mx-cloudflare.png)
+<img src="https://github.com/mc8051/anleitungen/raw/master/mailserver/screenshots/mx-cloudflare.png" alt="MX Record" style="width: 50%;"/>
 
-##### SPF Record
+#### SPF Record
 Der SPF Record kann mit dem [SPF Record Generator](http://www.spf-record.de/generator) erstellt werden. Der Eintrag soltle jedoch als TXT eingetragen werden.
 
 ---
 
 ### Einrichtung eines EMail Kontos
-![Screenshot Thunderbird](https://raw.githubusercontent/mc8051/anleitungen/tree/master/mailserver/screenshots/thunderbird-settings.png)
+<img src="https://github.com/mc8051/anleitungen/raw/master/mailserver/screenshots/thunderbird-settings.png" alt="Thunderbird" style="width: 50%;"/>
