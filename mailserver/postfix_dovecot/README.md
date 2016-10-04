@@ -549,12 +549,15 @@ Der Hostname muss in eure Domain geändert werden
     nano /etc/hostname
 #### MX-Record
 Folgende DNS Einstellungen müssen getätigt werden
-<img src="https://github.com/mc8051/anleitungen/raw/master/mailserver/screenshots/mx-cloudflare.png" alt="MX Record" style="width: 50%;"/>
+<img src="https://github.com/mc8051/anleitungen/raw/master/mailserver/postfix_dovecot/screenshots/mx-cloudflare.png" alt="MX Record" style="width: 50%;"/>
 
 #### SPF Record
 Der SPF Record kann mit dem [SPF Record Generator](http://www.spf-record.de/generator) erstellt werden. Der Eintrag soltle jedoch als TXT eingetragen werden.
 
+# rDNS
+Die IP Adresse des Servers MUSS die Domain auflösen. Dies kann man meist im Webinterface des Hosting Providers ändern.
+
 ---
 
 ### Einrichtung eines EMail Kontos
-<img src="https://github.com/mc8051/anleitungen/raw/master/mailserver/screenshots/thunderbird-settings.png" alt="Thunderbird" style="width: 50%;"/>
+<img src="https://github.com/mc8051/anleitungen/raw/master/mailserver/postfix_dovecot/screenshots/thunderbird-settings.png" alt="Thunderbird" style="width: 50%;"/>
