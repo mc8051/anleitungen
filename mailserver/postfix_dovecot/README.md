@@ -476,6 +476,14 @@ Default Sieve Script /var/lib/dovecot/sieve/default.sieve
         info_log_path = /var/log/dovecot-sieve.log
     }
 
+    service lmtp {
+        unix_listener /var/spool/postfix/private/dovecot-lmtp {
+            group = postfix
+            mode = 0600
+            user = postfix
+        }
+    }
+
 #### postfix
 /etc/postfix/main.cf
 
