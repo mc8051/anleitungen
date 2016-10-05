@@ -7,7 +7,7 @@ Verwendet werden: Dovecot, Postfix, MySQL, PostfixAdmin, Sieve Filter und Spamas
 ### Mindestvoraussetzungen:
 * RAM: 512MB+ (Da clamav als AntiViren System mitläuft)
 * 1 Core
-* 10GB+ (je nach dem, wie viele Postfächer es geben
+* 10GB+ (je nach dem, wie viele Postfächer es geben wird)
 * LAMP/ LNMP Server
 * Domain mit MX Record
 * Statische IP Adresse, die bestenfalls nicht als Spam gekennzeichnet ist!
@@ -282,7 +282,7 @@ Und komplett ersetzten. Bitte komplett durchlesen und dabei **mydomain** ersetzt
         args = /etc/dovecot/dovecot-mysql.conf
         driver = sql
     }
-    protocols = imap pop3 lmtp sieve
+    protocols = imap pop3
     service auth {
         unix_listener /var/spool/postfix/private/auth_dovecot {
             group = postfix
@@ -452,6 +452,9 @@ Default Sieve Script /var/lib/dovecot/sieve/default.sieve
 #### dovecot
 /etc/dovecot/local.conf
 
+    # Protokol LMTP und Sieve hinzufügen
+    protocols = imap pop3 lmtp sieve
+
     # Vorraussetzung fuer Spamhandling
 
     protocol lmtp {
@@ -554,7 +557,7 @@ Folgende DNS Einstellungen müssen getätigt werden
 #### SPF Record
 Der SPF Record kann mit dem [SPF Record Generator](http://www.spf-record.de/generator) erstellt werden. Der Eintrag soltle jedoch als TXT eingetragen werden.
 
-# rDNS
+#### rDNS
 Die IP Adresse des Servers MUSS die Domain auflösen. Dies kann man meist im Webinterface des Hosting Providers ändern.
 
 ---
