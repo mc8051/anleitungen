@@ -15,6 +15,7 @@ Verwendet werden: Dovecot, Postfix, MySQL, PostfixAdmin, Sieve Filter und Spamas
 * rDNS Eintrag
 * (vertauenswürdiges) SSL-Zertifikat mit 2048bit Verschlüsselung oder höher
   - Bspw. von [StartSSL](https://www.startssl.com/)
+  - Seit dem Oktober 2016 sollte [Let's Encrypt](https://github.com/mc8051/anleitungen/tree/master/ssl_certificate/letsencrypt) verwendet werden, da Mozilla und Apple StartSSL nicht mehr so wirklich vertauen
 * einen [LAMP](https://github.com/mc8051/anleitungen/tree/master/lamp) Server
 
 ---
