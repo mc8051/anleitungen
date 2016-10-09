@@ -573,3 +573,45 @@ Die IP Adresse des Servers MUSS die Domain auflösen. Dies kann man meist im Web
 
 ### Einrichtung eines EMail Kontos
 <img src="https://github.com/mc8051/anleitungen/raw/master/mailserver/postfix_dovecot/screenshots/thunderbird-settings.png" alt="Thunderbird" style="width: 50%;"/>
+
+
+
+## Deaktivieren des Anti-Viren Programms ClamAV
+
+Bearbeiten der amvis User Config
+
+    nano /etc/amavis/conf.d/50-user
+
+Auskommentieren der folgenden zwei Zeilen
+
+    @bypass_virus_checks_maps = (
+        \%bypass_virus_checks, \@bypass_virus_checks_acl, \$bypass_virus_checks_re);
+
+So dass es wie folgt aussieht
+
+    # @bypass_virus_checks_maps = (
+    #    \%bypass_virus_checks, \@bypass_virus_checks_acl, \$bypass_virus_checks_re);
+
+    @bypass_spam_checks_maps = (
+    \%bypass_spam_checks, \@bypass_spam_checks_acl, \$bypass_spam_checks_re);
+
+Amvis Service neustarten
+
+    service amavis restart
+
+Stoppen der CalmAV Services
+
+    service clamav-daemon stop
+    service clamav-freshclam stop
+
+CalmAV aus dem Autostart nehmen
+
+    update-rc.d -f clamav-daemon remove
+    update-rc.d -f clamav-freshclam remove
+
+*Für's rückgängig machen*
+
+    update-rc.d clamav-daemon defaults
+    update-rc.d clamav-freshclam defaults
+    service clamav-daemon start
+    service clamav-freshclam start
