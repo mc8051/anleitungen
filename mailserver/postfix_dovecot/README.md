@@ -615,3 +615,25 @@ CalmAV aus dem Autostart nehmen
     update-rc.d clamav-freshclam defaults
     service clamav-daemon start
     service clamav-freshclam start
+
+
+## Probleme mit IMAP Clients wie GMAIL
+Da der GMAIL Client für externe Domains andere Header mitsendet und dieser dann als Spam eingestuft wird, muss dieser entfernt werden.
+Hierfür sagen wir Postfix, welche Header Daten Ignoriert werden sollen.  
+In der Datei **/etc/postfix/header_checks** muss folgendes eingefügt werden:
+
+    /^X-MimeOLE:/           IGNORE
+    /^X-MSMail-Priority:/   IGNORE
+
+Jetzt geben wir Postfix die Anweisung in der **/etc/postfix/main.cf** mit welcher Datei welche Header Checks durchgeführt werden sollen.
+
+    mime_header_checks = regexp:/etc/postfix/header_checks
+    header_checks = regexp:/etc/postfix/header_checks
+
+Nun muss nach jeder Änderung ein neuer Hash table erstellt werden und postfix reloaded werden.
+
+    postmap /etc/postfix/header_checks
+    postfix reload
+
+
+Sollte GMAIL zwei mal die gleiche EMail senden, so sollte einfach mal der Cache geleert werden und die App neu installiert werden.
