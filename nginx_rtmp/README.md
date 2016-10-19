@@ -150,6 +150,7 @@ Updaten und installieren von ffmpeg
 Hierfür muss NGINX PHP unterstützen. [Siehe hier](https://github.com/mc8051/anleitungen/tree/master/nginx_php5).
 
 Zum authentifizieren wird folgendes PHP Script verwendet.
+
     <?php
     // www.server.com/auth.php?user=felix&pass=felixpassword
 
@@ -194,10 +195,6 @@ Quelle: https://groups.google.com/d/msg/nginx-rtmp/y028v8RVx9o/dND4THOLUc0J
 /usr/local/nginx/conf/nginx.conf
 
     application live {
-      allow publish all;
-      deny publish all;
-      allow play all;
-      deny play all;
       live on;
       on_publish http://localhost/auth.php;
       notify_method get;
