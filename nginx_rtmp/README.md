@@ -72,9 +72,16 @@ Solange NGINX nicht als Service eingerichtet ist muss dieser wie folgt gestartet
     }
 
 ### Erweiterte Konfiguration mit Transcoding
-avconv installieren, für das Transcoding
+ffmpeg installieren, für das Transcoding. Dafür muss in */etc/apt/source.list* folgendes hinzugefügt werden:
 
-    apt-get install libav-tools
+    deb ftp://ftp.deb-multimedia.org jessie main non-free
+
+Updaten und installieren von ffmpeg
+
+    apt-get update
+    apt-get install deb-multimedia-keyring
+    apt-get update
+    apt-get install ffmpeg
 
 /usr/local/nginx/conf/nginx.conf
 
@@ -91,7 +98,7 @@ avconv installieren, für das Transcoding
           deny publish all;
 
           push rtmp://localhost/youtube/;
-          exec_push avconv -i rtmp://127.0.0.1/live -r 30 -s 1280x720 -c:v libx264 -g 60 -maxrate 3000k -bufsize 900k -preset ultrafast -c:a copy -threads 6 -f flv rtmp://127.0.0.1/twitch/;
+          exec_push ffmpeg -i rtmp://localhost:1935/live/1080 -r 30 -s 1280x720 -c:v libx264 -g 60 -maxrate 3000k -bufsize 900k -preset ultrafast -c:a copy -threads 6 -f flv rtmp://127.0.0.1/twitch/1080;
         }
 
         application youtube {
