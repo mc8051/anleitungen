@@ -637,3 +637,36 @@ Nun muss nach jeder Änderung ein neuer Hash table erstellt werden und postfix r
 
 
 Sollte GMAIL zwei mal die gleiche EMail senden, so sollte einfach mal der Cache geleert werden und die App neu installiert werden.
+
+## Sender Rejection
+Möchte mann bestimmte Domains wie *@163.com immer ablehnen da sie nur Spam verschicken so kann man eine Statische Datenbank hinzufügen:
+
+In der Datei in der Zeile **smtpd_recipient_restrictions** folgendes hinzufügen
+
+    check_sender_access hash:/etc/postfix/blocked_senders
+
+Nun kann man in der Datei */etc/postfix/blocked_senders* alle Domain REJECTEN die man nicht in den Mailboxen haben möchte:
+
+    *@126.com       REJECT
+    *@163.com       REJECT
+
+Wichtig ist nun das nach jeder Änderung folgender Befehl ausgeführt wird:
+
+    postmap /etc/postfix/blocked_senders
+
+Nun kann der Postfix Server neugestartet werden
+
+## Spam Whitelist
+Möchte man einer Domain so sehr vertrauen das diese kein Spam verschicken so kann in der Userconfig von amavis (/etc/amavis/conf.d/50-user) folgende Zeile hinzugefügt werden:
+
+    @whitelist_sender_maps = (['.zara.com', '.amazon.de']);
+
+Zur übernahme muss amavis neugestartet werden.
+
+## Outgoing Content Filter deaktivieren
+Zum deaktivieren der Content Filter für Outgoing Traffic (smtpd) in der Datei /etc/postfix/master.cf auskommentiert werden.
+
+    127.0.0.1:10025 inet    n       -       -       -       -       smtpd
+            #-o content_filter=
+            -o local_recipient_maps=
+            -o relay_recipient_maps=
