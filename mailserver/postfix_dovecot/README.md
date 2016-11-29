@@ -670,3 +670,127 @@ Zum deaktivieren der Content Filter für Outgoing Traffic (smtpd) in der Datei /
             #-o content_filter=
             -o local_recipient_maps=
             -o relay_recipient_maps=
+
+## Spam Filter verschärfen
+### Postfix
+Postfix selbst gibt einiges an Regeln her, um nicht Standard-konforme SMTP-Kollegen rauszuwerfen:
+
+    /etc/postfix/main.cf
+
+Beispiel Restrictions
+
+    # Restrictions
+    # nachricht an den entfernten SMTP-Server, wenn er als "Spam-Schleuder" erkannt wurde
+    default_rbl_reply = $rbl_code RBLTRAP: Sorry, but I decided that you are a spammer, you are not welcome here!
+    # Zum eigene Wohl nicht ändern ;)
+    smtpd_delay_reject = yes
+    # Wir wollen begrüßt werden
+    smtpd_helo_required = yes
+    # Die Begrüßung muss aber höflich und korrekt sein :)
+    smtpd_helo_restrictions =
+        permit_sasl_authenticated
+        permit_mynetworks
+        reject_unauth_destination
+        reject_non_fqdn_sender
+        reject_non_fqdn_recipient
+        reject_unknown_recipient_domain
+        reject_non_fqdn_hostname
+        reject_invalid_hostname
+        reject_rbl_client zen.spamhaus.org # kann nicht mit dem GDNS angepingt werden
+        reject_unauth_pipelining
+        permit
+    # Das Wichtigste: die Empfänger-Beschränkungen
+    smtpd_recipient_restrictions =
+        permit_sasl_authenticated
+        permit_mynetworks
+        reject_unlisted_recipient
+        # check_policy_service inet:127.0.0.1:10023 # Postgrey
+        reject_invalid_hostname
+        reject_non_fqdn_hostname
+        reject_non_fqdn_recipient
+        reject_non_fqdn_sender
+        reject_unknown_sender_domain
+        reject_unknown_recipient_domain
+        reject_sender_login_mismatch
+        reject_unauth_pipelining
+        reject_unauth_destination
+        reject_multi_recipient_bounce
+        reject_non_fqdn_helo_hostname
+        reject_invalid_helo_hostname
+        reject_rbl_client zen.spamhaus.org # kann nicht mit dem GDNS angepingt werden
+        permit
+    # Die Sender-Restriktionen
+    smtpd_sender_restrictions =
+        permit_sasl_authenticated
+        permit_mynetworks
+        reject_unauth_destination
+        reject_non_fqdn_sender
+        reject_non_fqdn_recipient
+        reject_unknown_recipient_domain
+        reject_unauth_pipelining
+        reject_rbl_client zen.spamhaus.org
+        permit
+    # Die MUA Restriktionen
+    smtpd_client_restrictions = reject_invalid_hostname
+    # Mail Body Restriktionen
+    smtpd_data_restrictions =
+        reject_unauth_pipelining
+        reject_multi_recipient_bounce
+        permit 
+Quelle: http://wiki.nefarius.at/linux/postfix_anti-spam_konfiguration
+
+### Postgrey
+Sollte das Spamaufkommen zu hoch sein, so kann Postgrey eingesetzt werden. Dies Blockt unbekannte Sender für x Sekunden. Richtig konfigurierte Mailserver senden die Email dann ohne Probleme noch einmal.
+
+    apt-get install postgrey
+
+Nach erfolgreichem installieren (kann überprüft werden mit _lsof -i TCP:10023_) musss postgrey noch in Postfix eingebunden werden - in der Datei _/etc/postfix/main.cf_
+
+    smtpd_recipient_restrictions=
+        check_policy_service inet:127.0.0.1:10023
+
+In _/etc/default/postgrey_ kann festgelegt werden, wie lange ein Mailserver mind. mit einem erneuten Zustellversuch warten darf, und wie lange der erste Versuch maximal zurückliegen darf. Außerdem können Absender, deren Mails regelmäßig durch das Greylisting hindurchgelassen wurden automatisch in eine Whitelist aufgenommen werden:
+
+    # postgrey startup options, created for Debian
+    # (c)2004 Adrian von Bidder <avbidder@fortytwo.ch>
+    # Distribute and/or modify at will.
+    
+    # you may want to set
+    #   --delay=N   how long to greylist, seconds (default: 300)
+    #   --max-age=N delete old entries after N days (default: 30)
+    # see also the postgrey(8) manpage
+    
+    POSTGREY_OPTS="--inet=127.0.0.1:10023 --delay=60 --max-age=120 --auto-whitelist-clients=1"
+    
+    # the --greylist-text commandline argument can not be easily passed through
+    # POSTGREY_OPTS when it contains spaces.  So, insert your text here:
+    POSTGREY_TEXT="Temporarily rejected (greylisting), please try again later."
+
+Desweiteren sind Whitelists unter _/etc/postgrey/whitelist_clients_ verfügbar.
+
+Neustarten nicht vergessen: _/etc/init.d/postfix restart && /etc/init.d/postfix restart_  
+
+Quelle: https://www.21x9.org/e-mail-server-4-postgrey-spamassassin-clamav-postfix-filter/
+
+### Bogus MX
+Eine weitere Schutzmaßnahme ist das Abweisen von Mails aus bekannten „falschen“ oder „gefälschten“ Netzen, sog. „Bogus MX Networks“. Folgende Datei legt man selbst an und trägt diese Netze ein:
+
+    # /etc/postfix/bogus_mx
+    # bogus networks    
+    0.0.0.0/8   550 Mail server in broadcast network
+    1.0.0.0/8   550 Mail server in IANA reserved network
+    10.0.0.0/8  550 No route to your RFC 1918 network
+    127.0.0.0/8 550 Mail server in loopback network
+    224.0.0.0/4 550 Mail server in class D multicast network
+    172.16.0.0/12   550 No route to your RFC 1918 network
+    192.168.0.0/16  550 No route to your RFC 1918 network
+    69.6.0.0/18 550 REJECT Listed on Register Of Known Spam Operations
+    64.94.110.11/32 550 REJECT VeriSign Domain wildcard
+
+Wie bereits beschrieben bindet man diesen Filter in Postfix mit ein:
+
+    # /etc/postfix/main.cf
+    smtpd_recipient_restrictions =
+        check_sender_mx_access cidr:/etc/postfix/bogus_mx # Ans Ende der Restriktionen
+
+Quelle: http://wiki.nefarius.at/linux/postfix_anti-spam_konfiguration
