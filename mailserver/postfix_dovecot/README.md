@@ -58,7 +58,11 @@ Bearbeiten der */etc/postfix/main.cf*
 
     nano /etc/postfix/main.cf
 
-Und komplett ersetzten. Bitte komplett durchlesen und dabei **mydomain** ersetzten!
+Und komplett ersetzten. Bitte komplett durchlesen und dabei **mydomain** ersetzten!  
+
+*INFO*:  
+SMTPD = Incoming Traffic  
+SMTP  = Outgoing Traffic  
 
     smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)
     biff = no
@@ -69,7 +73,13 @@ Und komplett ersetzten. Bitte komplett durchlesen und dabei **mydomain** ersetzt
     smtpd_tls_cert_file=/etc/ssl/mydomain/mydomain.crt
     smtpd_tls_key_file=/etc/ssl/mydomain/mydomain.key
     smtpd_tls_CAfile = /etc/ssl/mydomain/root.crt
+    smtpd_tls_security_level=may
     smtpd_use_tls=yes
+
+    smtp_tls_cert_file=/etc/ssl/mydomain/mydomain.crt
+    smtp_tls_key_file=/etc/ssl/mydomain/mydomain.key
+    smtp_tls_CAfile = /etc/ssl/mydomain/root.crt
+    smtp_tls_security_level=may
 
     # disable SSLv3
     smtpd_tls_mandatory_protocols=!SSLv2,!SSLv3
