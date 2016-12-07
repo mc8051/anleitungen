@@ -36,7 +36,7 @@ Mail Account einrichten mit der User ID 6000
 
 Datenbank Benutzer erstellen mit eigener Datenbank
 
-    CREATE USER 'mail'@'%' IDENTIFIED WITH mysql_native_password;GRANT USAGE ON *.* TO 'mail'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;SET PASSWORD FOR 'mail'@'%' = 'meinPasswort';CREATE DATABASE IF NOT EXISTS `mail`;GRANT ALL PRIVILEGES ON `mail`.* TO 'mail'@'%';
+    TODO: Kommandos aktuallisieren
 
 Vorgefertigte Datein herrunterladen (aus dem Ordner config).  
 In den Datein muss dass Passwort (Platzhalter: "EUER_PASSWORT") mit dem MYSQL User Passwort ersetzt werden.
