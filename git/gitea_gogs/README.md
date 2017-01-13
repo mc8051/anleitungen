@@ -6,7 +6,7 @@ gitea ist ein Fork des Open Source Projektes Gogs. Da Gogs nur langsam weiter en
 
 Das Ziel dieses Projektes ist einen leichten Git-Service zu schreiben. Dafür wird die Programmiersprache Go verwendet. Mit dem Designe orrientiert sich das Projekt an GitHub.
 
-<img src="https://github.com/mc8051/anleitungen/raw/master/git/gutea_gogs/screenshots/explore.png" alt="explore page" style="width: 50%;"/>  
+<img src="https://github.com/mc8051/anleitungen/raw/master/git/gitea_gogs/screenshots/explore.png" alt="explore page" style="width: 50%;"/>  
 
 *[Explore](https://try.gitea.io/)*
 
