@@ -32,6 +32,10 @@ Wenn der Testdurchlauf ohne Probleme durchgelaufen ist, in *crontab -e*
     30 3 * * 1 service [webservice] stop && /path/to/certbot-auto renew --quiet && service [webservice] start && service postfix reload && service dovecot reload
 
 
+### Neue Subdomain hinzufügen
+
+    /path/to/certbot-auto certonly --standalone --email email@mydomain.tld --agree-tos --rsa-key-size 4096 -d new.domaintld --expand --renew-by-default
+
 ### Einbinden in einem WebServer oder Mailserver
 **NGINX**
 

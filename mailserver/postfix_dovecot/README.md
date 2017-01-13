@@ -42,7 +42,7 @@ Vorgefertigte Datein herrunterladen (aus dem Ordner config).
 In den Datein muss dass Passwort (Platzhalter: "EUER_PASSWORT") mit dem MYSQL User Passwort ersetzt werden.
 
 #### Paketinstallation:
-    apt-get install dovecot-common dovecot-imap dovecot-pop3d postfix postfix-mysql
+    apt-get install dovecot-core dovecot-imapd dovecot-pop3d dovecot-mysql postfix postfix-mysql
 
 Bei der Installation möchte Postfix eine Konfiguration haben, diese sieht wie folgt aus.
 - Allgemeine Art: *Internet-Site*
@@ -170,7 +170,7 @@ Und komplett ersetzten. Bitte komplett durchlesen!
     #  -o milter_macro_daemon_name=ORIGINATING
     smtps     inet  n       -       -       -       -       smtpd
     #  -o syslog_name=postfix/smtps
-    -o smtpd_tls_wrappermode=yes
+      -o smtpd_tls_wrappermode=yes
     #  -o smtpd_sasl_auth_enable=yes
     #  -o smtpd_reject_unlisted_recipient=no
     #  -o smtpd_client_restrictions=$mua_client_restrictions
@@ -219,7 +219,7 @@ Und komplett ersetzten. Bitte komplett durchlesen!
     # Also specify in main.cf: maildrop_destination_recipient_limit=1
     #
     maildrop  unix  -       n       n       -       -       pipe
-    flags=DRhu user=vmail argv=/usr/bin/maildrop -d ${recipient}
+      flags=DRhu user=vmail argv=/usr/bin/maildrop -d ${recipient}
     #
     # ====================================================================
     #
@@ -251,23 +251,21 @@ Und komplett ersetzten. Bitte komplett durchlesen!
     # See the Postfix UUCP_README file for configuration details.
     #
     uucp      unix  -       n       n       -       -       pipe
-    flags=Fqhu user=uucp argv=uux -r -n -z -a$sender - $nexthop!rmail ($recipient)
+      flags=Fqhu user=uucp argv=uux -r -n -z -a$sender - $nexthop!rmail ($recipient)
     #
     # Other external delivery methods.
     #
     ifmail    unix  -       n       n       -       -       pipe
-    flags=F user=ftn argv=/usr/lib/ifmail/ifmail -r $nexthop ($recipient)
+      flags=F user=ftn argv=/usr/lib/ifmail/ifmail -r $nexthop ($recipient)
     bsmtp     unix  -       n       n       -       -       pipe
-    flags=Fq. user=bsmtp argv=/usr/lib/bsmtp/bsmtp -t$nexthop -f$sender $recipient
+      flags=Fq. user=bsmtp argv=/usr/lib/bsmtp/bsmtp -t$nexthop -f$sender $recipient
     scalemail-backend unix	-	n	n	-	2	pipe
-    flags=R user=scalemail argv=/usr/lib/scalemail/bin/scalemail-store ${nexthop} ${user} ${extension}
+      flags=R user=scalemail argv=/usr/lib/scalemail/bin/scalemail-store ${nexthop} ${user} ${extension}
     mailman   unix  -       n       n       -       -       pipe
-    flags=FR user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
-    ${nexthop} ${user}
-
-    # Eigen Konfiguration
+      flags=FR user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
+      ${nexthop} ${user}
     dovecot   unix  -       n       n       -       -       pipe
-    flags=DRhu user=vmail:vmail argv=/usr/lib/dovecot/deliver -d ${recipient}
+      flags=DRhu user=vmail:vmail argv=/usr/lib/dovecot/deliver -d ${recipient}
 
 Überprüfen der Konfiguration
 
