@@ -10,15 +10,15 @@ Build Tools installieren
 
 Neuste Version herunterladen
 
-    curl -O http://nginx.org/download/nginx-1.9.9.zip
+    curl -O http://nginx.org/download/nginx-1.9.9.tar.gz
 
 RTMP Modul herunterladen aus dem GIT
 
-    curl -O https://github.com/arut/nginx-rtmp-module/archive/master.zip
+    curl -O -L https://github.com/arut/nginx-rtmp-module/archive/master.zip
 
 Build durchfüherunterladen
 
-    unzip nginx-1.9.9.zip
+    tar xzvf nginx-1.9.9.zip
     unzip master.zip
     cd nginx-1.9.9
     ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master
@@ -72,16 +72,29 @@ Solange NGINX nicht als Service eingerichtet ist muss dieser wie folgt gestartet
     }
 
 ### Erweiterte Konfiguration mit Transcoding
-ffmpeg installieren, für das Transcoding. Dafür muss in */etc/apt/source.list* folgendes hinzugefügt werden:
+ffmpeg installieren, für das Transcoding. 
 
-    deb ftp://ftp.deb-multimedia.org jessie main non-free
+    apt-get install yasm nasm build-essential automake autoconf libtool pkg-config libcurl4-openssl-dev intltool libxml2-dev libgtk2.0-dev libnotify-dev libglib2.0-dev libevent-dev checkinstall
+    
+Downloaden aus den Sources:
 
-Updaten und installieren von ffmpeg
+    wget https://www.ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
+    tar jxvf ffmpeg-snapshot.tar.bz2
+    
+Compile:
 
-    apt-get update
-    apt-get install deb-multimedia-keyring
-    apt-get update
-    apt-get install ffmpeg
+    cd ffmpeg
+    ./configure --prefix=/usr
+    time make -j 8
+    cat RELEASE
+    checkinstall
+    
+Install deb file:
+
+    dpkg --install ffmpeg_*.deb
+    
+
+*Sources*: http://superuser.com/a/865744
 
 /usr/local/nginx/conf/nginx.conf
 
