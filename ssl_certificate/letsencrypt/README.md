@@ -50,7 +50,12 @@ Wenn der Testdurchlauf ohne Probleme durchgelaufen ist, in *crontab -e*
 
 **Postfix**
 
-    smtpd_tls_cert_file=/etc/letsencrypt/live/[domain/cert.pem
-    smtpd_tls_key_file=/etc/letsencrypt/live/[domain/privkey.pem
-    smtpd_tls_CAfile = /etc/letsencrypt/live/[domain/chain.pem
+    smtpd_tls_cert_file=/etc/letsencrypt/live/[domain]/cert.pem
+    smtpd_tls_key_file=/etc/letsencrypt/live/[domain]/privkey.pem
+    smtpd_tls_CAfile = /etc/letsencrypt/live/[domain]/chain.pem
 
+**Dovecot**
+
+    ssl_cert = </etc/letsencrypt/live/[domain]/cert.pem
+    ssl_key = </etc/letsencrypt/live/[domain]/privkey.pem
+    ssl_ca = </etc/letsencrypt/live/[domain]/chain.pem
