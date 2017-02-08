@@ -328,8 +328,6 @@ Und komplett ersetzten. Bitte komplett durchlesen und dabei **mydomain** ersetzt
     }
 
 #### Final
-    service spamassassin restart
-    service amavis restart
     service postfix restart
     service dovecot restart
 
@@ -459,8 +457,11 @@ Default Sieve Script /var/lib/dovecot/sieve/default.sieve
     }
 
 #### dovecot
-/etc/dovecot/local.conf
+/etc/dovecot/dovecot.conf erweitern um folgende Punkte
 
+    #
+    #   ACHTUNG: Nur lmtp und sieve hinzufügen!
+    #
     # Protokol LMTP und Sieve hinzufügen
     protocols = imap pop3 lmtp sieve
 
