@@ -4,8 +4,8 @@ Diese Anleitung wurde im September 2016 erstellt und ist zu diesem Zeitpunkt akt
 Verwendet werden: Dovecot, Postfix, MySQL, PostfixAdmin, Sieve Filter und Spamassasin   
 *Diese Anleitung bezieht sich auf das OS Debian Jessie.*
 
-### Mindestvoraussetzungen:
-* RAM: 512MB+ (Da clamav als AntiViren System mitläuft)
+## Mindestvoraussetzungen:
+* RAM: 1024MB+ (Da clamav als AntiViren System mitläuft)
 * 1 Core
 * 10GB+ (je nach dem, wie viele Postfächer es geben wird)
 * LAMP/ LNMP Server
@@ -14,7 +14,6 @@ Verwendet werden: Dovecot, Postfix, MySQL, PostfixAdmin, Sieve Filter und Spamas
   - Uberprüfbar bei [Blacklist Checks](http://whatismyipaddress.com/blacklist-check).
 * rDNS Eintrag
 * (vertauenswürdiges) SSL-Zertifikat mit 2048bit Verschlüsselung oder höher
-  - Bspw. von [StartSSL](https://www.startssl.com/)
   - Seit dem Oktober 2016 sollte [Let's Encrypt](https://github.com/mc8051/anleitungen/tree/master/ssl_certificate/letsencrypt) verwendet werden, da Mozilla und Apple StartSSL nicht mehr so wirklich vertauen
 * einen [LAMP](https://github.com/mc8051/anleitungen/tree/master/lamp) Server
 
@@ -26,7 +25,7 @@ Bevor andere Pakete installiert werden einmal ein Update ausführen.
 
 ---
 
-### Mail Server Installation
+## Grund Mail Server Installation
 #### Voreinstellung:
 Mail Account einrichten mit der User ID 6000
 
@@ -36,7 +35,10 @@ Mail Account einrichten mit der User ID 6000
 
 Datenbank Benutzer erstellen mit eigener Datenbank
 
-    TODO: Kommandos aktuallisieren
+    CREATE USER vmail@localhost IDENTIFIED BY 'EUER_PASSWORT';
+    CREATE DATABASE vmail;
+    GRANT ALL PRIVILEGES ON vmail.* TO 'vmail'@'localhost' IDENTIFIED BY 'EUER_PASSWORT';
+    FLUSH PRIVILEGES;
 
 Vorgefertigte Datein herrunterladen (aus dem Ordner config).  
 In den Datein muss dass Passwort (Platzhalter: "EUER_PASSWORT") mit dem MYSQL User Passwort ersetzt werden.
@@ -52,7 +54,7 @@ Bei der Installation möchte Postfix eine Konfiguration haben, diese sieht wie f
 Hochladen der geänderten Vorgefertigte Datein von postfix.   
 Anpassen der Rechte
 
-    chown 600 /etc/postfix/mysql-* && chmod g+r /etc/postfix/mysql-*
+    chown 600 /etc/postfix/mysql-* && chmod g+r /etc/postfix/mysql-* && chown root:root /etc/postfix/mysql-*
 
 Bearbeiten der */etc/postfix/main.cf*
 
@@ -333,13 +335,15 @@ Und komplett ersetzten. Bitte komplett durchlesen und dabei **mydomain** ersetzt
 
 ---
 
-### PostfixAdmin Installation
+## PostfixAdmin Installation
 #### Paketinstallation:
     apt-get install php5-imap 
 
 Letze Version von [Postfix](https://sourceforge.net/projects/postfixadmin/files/postfixadmin/) herrunterladen und auf den Server hochladen in */var/www/html/*.
 
-    tar xzvf postfix.tar.gz
+    curl -L  http://downloads.sourceforge.net/project/postfixadmin/postfixadmin/postfixadmin-3.0/postfixadmin-3.0.tar.gz > /tmp/postfixadmin.tar.gz
+    tar xzf /tmp/postfixadmin.tar.gz -C /tmp/
+    mv /tmp/postfixadmin-3.0/ /var/www/html/postfix/
 
 #### Konfiguration von PostfixAdmin:
 Rechte gewähren für den Webserver
@@ -379,18 +383,13 @@ Zudem sollte man bereits jetzt schon unter Virtual Liste ein EMail Account erste
 
 ---
 
-### Spam Filter Installation
+## Spam Filter Installation
 
 #### Paketinstallation:
-    apt-get install spamassassin razor pyzor rsyslog
-    apt-get install amavisd-new
-    apt-get install dovecot-sieve dovecot-lmtpd
-    apt-get install clamav clamav-daemon
+    apt-get install spamassassin razor pyzor rsyslog amavisd-new dovecot-managesieved dovecot-sieve dovecot-lmtpd clamav clamav-daemon arj bzip2 cabextract cpio file gzip nomarch pax unzip zoo zip zoo
 
     /etc/init.d/clamav-freshclam restart
     /etc/init.d/clamav-daemon restart
-
-    apt-get install arj bzip2 cabextract cpio file gzip nomarch pax unzip zoo zip zoo
 
     razor-admin -create
     razor-admin -register
@@ -563,7 +562,7 @@ In */etc/postfix/main.cf* muss *local_transport = virtual* entfernt werden.
 
 ---
 
-### DNS Einstellung
+## DNS Einstellung
 #### Hostnamen anpassen
 Der Hostname muss in eure Domain geändert werden
 
@@ -580,7 +579,7 @@ Die IP Adresse des Servers MUSS die Domain auflösen. Dies kann man meist im Web
 
 ---
 
-### Einrichtung eines EMail Kontos
+## Einrichtung eines EMail Kontos
 <img src="https://github.com/mc8051/anleitungen/raw/master/mailserver/postfix_dovecot/screenshots/thunderbird-settings.png" alt="Thunderbird" style="width: 50%;"/>
 
 
@@ -681,21 +680,16 @@ Zum deaktivieren der Content Filter für Outgoing Traffic (smtpd) in der Datei /
             -o relay_recipient_maps=
 
 ## Spam Filter verschärfen
-### Postfix
 Postfix selbst gibt einiges an Regeln her, um nicht Standard-konforme SMTP-Kollegen rauszuwerfen:
 
     /etc/postfix/main.cf
 
 Beispiel Restrictions
 
-    # Restrictions
-    # nachricht an den entfernten SMTP-Server, wenn er als "Spam-Schleuder" erkannt wurde
     default_rbl_reply = $rbl_code RBLTRAP: Sorry, but I decided that you are a spammer, you are not welcome here!
-    # Zum eigene Wohl nicht ändern ;)
     smtpd_delay_reject = yes
-    # Wir wollen begrüßt werden
     smtpd_helo_required = yes
-    # Die Begrüßung muss aber höflich und korrekt sein :)
+    
     smtpd_helo_restrictions =
         permit_sasl_authenticated
         permit_mynetworks
@@ -705,15 +699,16 @@ Beispiel Restrictions
         reject_unknown_recipient_domain
         reject_non_fqdn_hostname
         reject_invalid_hostname
-        reject_rbl_client zen.spamhaus.org # kann nicht mit dem GDNS angepingt werden
+        reject_rbl_client zen.spamhaus.org
         reject_unauth_pipelining
         permit
-    # Das Wichtigste: die Empfänger-Beschränkungen
+    
+    # WICHTIG: Sollte Postgrey nicht verwendet werden die check_policy_service entfernen
     smtpd_recipient_restrictions =
         permit_sasl_authenticated
         permit_mynetworks
         reject_unlisted_recipient
-        # check_policy_service inet:127.0.0.1:10023 # Postgrey
+        check_policy_service inet:127.0.0.1:10023
         reject_invalid_hostname
         reject_non_fqdn_hostname
         reject_non_fqdn_recipient
@@ -726,29 +721,16 @@ Beispiel Restrictions
         reject_multi_recipient_bounce
         reject_non_fqdn_helo_hostname
         reject_invalid_helo_hostname
-        reject_rbl_client zen.spamhaus.org # kann nicht mit dem GDNS angepingt werden
-        permit
-    # Die Sender-Restriktionen
-    smtpd_sender_restrictions =
-        permit_sasl_authenticated
-        permit_mynetworks
-        reject_unauth_destination
-        reject_non_fqdn_sender
-        reject_non_fqdn_recipient
-        reject_unknown_recipient_domain
-        reject_unauth_pipelining
         reject_rbl_client zen.spamhaus.org
         permit
-    # Die MUA Restriktionen
-    smtpd_client_restrictions = reject_invalid_hostname
-    # Mail Body Restriktionen
-    smtpd_data_restrictions =
-        reject_unauth_pipelining
-        reject_multi_recipient_bounce
-        permit 
+    
+    smtpd_sender_restrictions =
+        reject_authenticated_sender_login_mismatch
+        reject_unknown_sender_domain
+
 Quelle: http://wiki.nefarius.at/linux/postfix_anti-spam_konfiguration
 
-### Postgrey
+## Postgrey
 Sollte das Spamaufkommen zu hoch sein, so kann Postgrey eingesetzt werden. Dies Blockt unbekannte Sender für x Sekunden. Richtig konfigurierte Mailserver senden die Email dann ohne Probleme noch einmal.
 
     apt-get install postgrey
@@ -781,7 +763,7 @@ Neustarten nicht vergessen: _/etc/init.d/postfix restart && /etc/init.d/postfix 
 
 Quelle: https://www.21x9.org/e-mail-server-4-postgrey-spamassassin-clamav-postfix-filter/
 
-### Bogus MX
+## Bogus MX
 Eine weitere Schutzmaßnahme ist das Abweisen von Mails aus bekannten „falschen“ oder „gefälschten“ Netzen, sog. „Bogus MX Networks“. Folgende Datei legt man selbst an und trägt diese Netze ein:
 
     # /etc/postfix/bogus_mx
