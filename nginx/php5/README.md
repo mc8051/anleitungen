@@ -9,27 +9,27 @@ NGINX ist ein stabieler Open Source HTTP-Server. Er besitzt ein geringen Resourc
 ### Konfiguration
 Der Server sollte nun im Browser erreichbar sein. Um allerdings PHP zur Verfügung zu stellen muss die /etc/nginx/sites-available/default Konfiguration bearbeitet werden.
 
-    listen 80 default_server;
-    listen [::]:80 default_server;
-
-    root /var/www/html;
-    # index.php hinzufügen
-    index index.php index.html index.htm index.nginx-debian.html;
-    server_name _;
-
-    location / {
-            try_files $uri $uri/ =404;
-    }
-
-    # PHP Datein müssen interpretiert werden
-    location ~ \.php$ {
-            try_files $uri =404;
-            fastcgi_pass unix:/var/run/php5-fpm.sock;
-            fastcgi_index index.php;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            include fastcgi_params;
-    }
-
+    server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+    
+        root /var/www/html;
+        # index.php hinzufügen
+        index index.php index.html index.htm index.nginx-debian.html;
+        server_name _;
+    
+        location / {
+                try_files $uri $uri/ =404;
+        }
+    
+        # PHP Datein müssen interpretiert werden
+        location ~ \.php$ {
+                try_files $uri =404;
+                fastcgi_pass unix:/var/run/php5-fpm.sock;
+                fastcgi_index index.php;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                include fastcgi_params;
+        }
     }
 
 ### Optionales Rewrite
