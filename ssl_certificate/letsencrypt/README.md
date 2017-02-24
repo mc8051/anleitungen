@@ -29,7 +29,7 @@ Testdurchlauf starten
 
 Wenn der Testdurchlauf ohne Probleme durchgelaufen ist, in *crontab -e*
 
-    30 3 * * 1 service [webservice] stop && /path/to/certbot-auto renew --quiet && service [webservice] start && service postfix reload && service dovecot reload
+    30 3 */3 * * service [webservice] stop && /path/to/certbot-auto renew --quiet --no-self-upgrade && service [webservice] start && service postfix reload && service dovecot reload
 
 
 ### Neue Subdomain hinzufügen
