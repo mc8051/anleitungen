@@ -1,5 +1,0 @@
-hosts = localhost
-user = mail
-password = EUER_PASSWORT
-dbname = mail
-query = SELECT maildir FROM mailbox WHERE username='%s' AND active = '1'

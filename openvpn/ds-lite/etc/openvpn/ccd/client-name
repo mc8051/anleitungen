@@ -1,5 +1,0 @@
-
-ifconfig-push 10.8.0.101 255.255.255.0
-
-# ifconfig-ipv6-push <client ip> <server ip>
-ifconfig-ipv6-push 2001:db8:702:1000::2/64 2001:db8:702:1000::1/64

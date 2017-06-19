@@ -1,5 +1,0 @@
-hosts = localhost
-user = mail
-password = EUER_PASSWORT
-dbname = mail
-query = SELECT username AS allowedUser FROM mailbox WHERE username="%s" AND active = 1 UNION SELECT goto FROM alias WHERE address="%s" AND active = 1
